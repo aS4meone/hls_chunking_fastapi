@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Playback</title>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+</head>
+<body>
+    <h2>Enter Video ID to Play</h2>
+    <input type="text" id="videoIdInput" placeholder="Video ID">
+    <button onclick="loadVideo()">Load Video</button>
+
+    <video id="videoPlayer" controls width="640" height="360"></video>
+
+    <script>
+        function loadVideo() {
+            const videoId = document.getElementById('videoIdInput').value;
+            const videoSrc = `/videos/${videoId}/${videoId}.m3u8`;
+            const videoPlayer = document.getElementById('videoPlayer');
+
+            if (Hls.isSupported()) {
+                var hls = new Hls();
+                hls.loadSource(videoSrc);
+                hls.attachMedia(videoPlayer);
+                hls.on(Hls.Events.MANIFEST_PARSED, function () {
+                    videoPlayer.play();
+                });
+            } else if (videoPlayer.canPlayType('application/vnd.apple.mpegurl')) {
+                videoPlayer.src = videoSrc;
+                videoPlayer.addEventListener('loadedmetadata', function () {
+                    videoPlayer.play();
+                });
+            }
+        }
+    </script>
+</body>
+</html>
